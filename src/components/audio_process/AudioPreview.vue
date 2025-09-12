@@ -162,7 +162,7 @@
           // Create new WaveSurfer instance
           this.wavesurfer = WaveSurfer.create({
             container: this.$refs.waveformContainer,
-            waveColor: '#1976d2',
+            waveColor: '#333',
             progressColor: '#ff5722',
             backgroundColor: '#f8f9fa',
             barWidth: 2,
@@ -172,7 +172,7 @@
             normalize: true,
             interact: true,
             dragToSeek: true,
-            height: 60,
+            height: 120,
           })
   
           // Event listeners
@@ -453,7 +453,7 @@
   
   .waveform-container {
     position: relative;
-    /* min-height: 120px; */
+    min-height: 60px;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
     margin-bottom: 20px;
@@ -481,7 +481,7 @@
     width: 24px;
     height: 24px;
     border: 3px solid #f3f3f3;
-    border-top: 3px solid #1976d2;
+    border-top: 3px solid #7e90a2;
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -526,13 +526,13 @@
   }
   
   .play-btn {
-    background: #1976d2;
+    background: #ffffff;
     color: white;
     font-size: 20px;
   }
   
   .play-btn:hover:not(:disabled) {
-    background: #1565c0;
+    background: #98a4b1;
   }
   
   .time-display {
@@ -569,7 +569,7 @@
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: #1976d2;
+    background: #666e77;
     cursor: pointer;
     transition: transform 0.2s;
   }

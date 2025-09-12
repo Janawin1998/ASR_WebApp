@@ -7,7 +7,7 @@
           Log-in ก่อนเข้าระบบ
         </div>
         <div class="role-badge">
-          Role<br>Manager
+          Manager
         </div>
       </div>
   
@@ -65,14 +65,14 @@
       </table>
   
       <!-- Process Info -->
-      <div class="process-info">
+      <!-- <div class="process-info">
         <h3>Note</h3>
         <ul>
           <li>ตัด noise</li>
           <li>ตัดช่วงเสียงเงียบ</li>
           <li>split ให้ file ยาวไม่เกิน 5 นาที</li>
         </ul>
-      </div>
+      </div> -->
   
       <!-- Control Buttons -->
       <div class="control-buttons">
