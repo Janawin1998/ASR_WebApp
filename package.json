@@ -10,8 +10,13 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "vue": "^3.5.17",
+    "axios": "^1.12.2",
+    "bootstrap": "^5.3.8",
+    "bootstrap-vue-3": "^0.5.1",
+    "vue": "^3.5.22",
+    "vue-axios": "^3.5.2",
     "vue-router": "^4.5.1",
+    "vue-transmit": "^8.1.4",
     "wavesurfer.js": "^7.10.1"
   },
   "devDependencies": {

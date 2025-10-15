@@ -152,7 +152,6 @@
     methods: {
       handleFileUpload(event) {
         const uploadedFiles = Array.from(event.target.files)
-        
         if (this.files.length + uploadedFiles.length > this.maxFiles) {
           alert(`สามารถอัปโหลดได้สูงสุด ${this.maxFiles} ไฟล์`)
           return
@@ -172,7 +171,7 @@
           // Get audio duration
           this.getAudioDuration(file, this.files.length - 1)
         })
-  
+        console.log(this.files);
         // Clear file input
         event.target.value = ''
       },
@@ -189,6 +188,7 @@
         })
         
         audio.src = url
+        console.log(audio.src)
       },
   
       formatFileSize(bytes) {
