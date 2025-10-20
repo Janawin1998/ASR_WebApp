@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 // import HomeView from '../views/HomeView.vue'
 import AudioUpload from '@/components/audio_process/AudioUpload.vue'
 import login from '@/components/webpage/login.vue'
-import progressList from '@/components/webpage/progress list.vue'
+import upload from '@/components/webpage/upload.vue'
 import search from '@/components/webpage/search.vue'
 import Transcript from '@/components/webpage/transcript.vue'
 const router = createRouter({
@@ -19,9 +19,9 @@ const router = createRouter({
       component: login,
     },
     {
-      path: '/progress-list',
-      name: 'progress-list',
-      component: progressList,
+      path: '/upload',
+      name: 'upload',
+      component: upload,
     },
     {
       path: '/search',

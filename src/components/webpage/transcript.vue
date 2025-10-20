@@ -1,10 +1,6 @@
 <template>
   	<div class="transcript">
-    		<div class="header">
-      			<div class="asr-header">
-      			</div>
-      			<div class="asr-header-text">AST-ASR Team Transcription</div>
-    		</div>
+    		<Navbar></Navbar>
     		<div class="table-container">
                  <table class="table">
 						<thead>
@@ -22,8 +18,8 @@
 						</tr>
 						</thead>
 						<tbody>
-						<tr v-for="(file, index) in files" :key="index">
-							<td>{{ index + 1 }}.</td>
+						<tr v-for="(file, index) in files_segment" :key="index">
+							<td>{{ index+1 }}</td>
                             <td >
                                 <div @click="togglefile(index)" class="select-table">
                                 <img v-if="!this.selectitem[index]"  src="../../assets/svg/CheckCircle.svg" class="select-item">
@@ -76,42 +72,31 @@
     		</div>
     		<div class="export-btn">
       			<b class="export-text">Export to CSV</b>
-                <img class="boxarrowup-icon" src="../../assets/svg/boxarrowup.svg">
+                <img class="boxarrowup-icon" src="../../assets/svg/box-arrow-down.svg">
     		</div>
     	
   	</div>
 </template>
 
 <script>
+import Navbar from './Navbar.vue';
 import { reactive } from 'vue';
 export default {
     name: 'transcript',
+    components: {
+        Navbar,
+    },
     data() {
         return {
-           files: [
-          {
-            id: 1,
-            name: 'Username250923_LCL1_001',
-            transcript: 'psa eight one zero turn right to trasadingen ...',
-            position: 'LCL1',
-            wer: '15%',
-            include: true,
-            file: null
-          },
-          {
-            id: 2,
-            name: 'Username250923_LCL1_002',
-            transcript: 'psa eight one zero contact zurich one ...',
-            position: 'LCL1',
-            wer: '20%',
-            include: true,
-            file: null
-          }
+           files_segment: [
             ], 
           selectitem: reactive({}),
           isPlaying: reactive({}),
           status_complete: reactive({}),
         }
+    },
+    mounted(){
+        this.getlocal();
     },
     methods: {
         togglefile(index) {
@@ -136,12 +121,16 @@ export default {
             // this.status_complete[index] = status;
             // console.log(this.status_complete);
         },
+        async getlocal () {
+            const storedData = await localStorage.getItem('transcript');
+            console.log('Retrieved data from localStorage:', JSON.parse(storedData));
+            this.files_segment = JSON.parse(storedData).data.segment;
+        }
     }
 }
 </script>
 
 <style>
-
 
 .transcript {
   	width: 1920px;
@@ -154,36 +143,15 @@ export default {
   	color: #000;
   	font-family: roboto;
 }
-.header {
-  	position: absolute;
-  	top: 0px;
-  	left: 0px;
-  	width: 1920px;
-  	height: 71px;
-  	font-family: roboto;
-}
-.asr-header {
-  	position: absolute;
-  	top: 0px;
-  	left: 0px;
-  	background-color: #d9d9d9;
-  	width: 1920px;
-  	height: 71px;
-}
-.asr-header-text {
-  	position: absolute;
-  	top: 15px;
-  	left: 21px;
-}
 .table-container {
   	position: absolute;
-  	top: 323px;
+  	top: 320px;
   	left: 59px;
   	background-color: rgba(137, 137, 137, 0);
   	border: 1px solid #000;
   	box-sizing: border-box;
   	width: 1802px;
-    height: 600px;
+    height: 700px;
     /* display: grid; */
     overflow-x: hidden;
   	overflow-y: scroll;
@@ -293,5 +261,36 @@ export default {
     height: 46px;
     color: black;
     user-select: none ;
+}
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ccd0e488 0%, #90889881 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    text-align: center;
+}
+
+.spinner {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    border: 8px solid rgba(255, 255, 255, 0.3);
+    border-top: 8px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 </style>

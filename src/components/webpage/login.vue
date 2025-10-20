@@ -1,29 +1,13 @@
 <template>
   	<div class="login">
         <div class="header-asr-text">ASR</div>
-            <div class="role-box">
 			<!-- <div class="role-box-select"> -->
-			<div class="role-box-select" >
-				<div class="role-text-select">{{ this.role }}</div>
-			    	<div class="btn-group">
-						<button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split " data-bs-toggle="dropdown" aria-expanded="false">
-						</button>
-						<ul class="dropdown-menu dropdown-menu-end">
-							<!-- Dropdown menu links -->
-							 	<li><button class="dropdown-item" type="button" @click="this.role = 'Manager'">Manager</button></li>
-								<li><button class="dropdown-item" type="button" @click="this.role = 'Transcriber'">Transcriber</button></li>
-								<li><button class="dropdown-item" type="button" @click="this.role = 'Viewer'">Viewer</button></li>
-						</ul>
-					</div>
-				</div>
-      			<div class="role-text">Role</div>
-    		</div>
             <div class="user-box">
-      			<input class="user-box-select" type="text" placeholder="username"/>
-      			<div class="user-text">User</div>
+      			<input class="user-box-select" type="text" placeholder="Enter your username" pattern="[a-zA-Z0-9 ]"/>
+      			<div class="user-text">Username</div>
     		</div>
     		<div class="password-box">
-      			<input class="password-box-select" type="password" placeholder="password"/>
+      			<input class="password-box-select" type="password" placeholder="Enter your password" lang="en"/>
       			<div class="password-text">Password</div>
     		</div>
 			<div class="remember-me">
@@ -64,6 +48,9 @@ export default {
 </script>
 
 <style>
+:root .remember-me label{
+	padding-left: 8px;
+}
 
 .login {
     max-width: 1920px;
@@ -82,7 +69,7 @@ export default {
 }
 .password-box {
   	position: absolute;
-  	top: 501px;
+  	top: 430px;
   	left: 765px;
   	width: 560px;
   	height: 112px;
@@ -102,7 +89,7 @@ export default {
 }
 .user-box {
   	position: absolute;
-  	top: 400px;
+  	top: 300px;
   	left: 765px;
   	width: 562px;
   	height: 112px;
@@ -185,7 +172,7 @@ export default {
 
 .remember-me {
   	position: absolute;
-  	top: 590px;
+  	top: 550px;
   	left: 765px;
   	font-size: 20px;
 	user-select: none;

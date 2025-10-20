@@ -1,10 +1,6 @@
 <template>
   	<div class="transcript">
-    		<div class="header">
-      			<div class="asr-header">
-      			</div>
-      			<div class="asr-header-text">AST-ASR Team Transcription</div>
-    		</div>
+    		<Navbar></Navbar>
     		<div 
 			@dragenter.prevent="toggleActive" 
 			@dragleave.prevent="toggleActive" 
@@ -17,13 +13,15 @@
 				:class="{ 'active-upload': isActive }"
 				class="upload-browse"
 				>
-				<span>Drag or Drop File</span>
+				<span>Drop File</span>
 				<span>OR</span>
 				<label for="file-upload">Select File</label>
+				<span>(.wav files only)</span>
 				<input 
 				type="file" 
 				id="file-upload"
 				multiple
+				accept=".wav" 
 				@change="upload_file($event)"
 				/>
 				</div>
@@ -76,12 +74,18 @@
 					@seek="seekAudio"
 				/>
     		</div>
-    		<div class="process-btn" @click="senddata()">
+    		<button class="process-btn" @click="senddata()" :disabled="!loading">
       			Process
-    		</div>
-    		<div class="cancel-btn" @click="clearfiles()">
+    		</button>
+    		<button class="cancel-btn" @click="clearfiles()">
 				Cancel
-    		</div>
+    		</button>
+			<div v-if="loadingCircle" class="loading-overlay">
+				<div class="loading-spinner">
+				<div class="spinner"></div>
+					<p class="loading-text">Loading...</p>
+				</div>
+            </div>
   	</div>
 </template>
 
@@ -90,20 +94,28 @@
 import VueAxios from "vue-axios";
 import axios from "axios";
 import AudioPreview from '../audio_process/AudioPreview.vue';
+import Navbar from "./Navbar.vue";
+import path from "path";
 export default {    
-    name: 'progress list',
+    name: 'upload',
 	components: {
 		AudioPreview,
+		Navbar
 	},
 	data() {
 		return {
 			isActive: false,
 			files: [
 			],
+			splitfile: {},
 			isPlaying: false,
 			selectedAudio: null,
         	currentTime: '0:00',
-			maxFiles: 5,
+			maxFiles: 1,
+			loading: false,
+			loadingCircle: false,
+			pathname: '',
+
 		}
 	},
 	mounted() {
@@ -116,15 +128,12 @@ export default {
     },
 	methods: {
 		async senddata(index) {
-
+			this.loading = false
+			localStorage.removeItem('transcript')
 			const filelength = this.files.length
+			this.loadingCircle = true
+			let filepath = null
 
-			if (filelength === 0) {
-				alert('กรุณาอัปโหลดไฟล์ก่อนทำการประมวลผล')
-				return
-			}
-
-			else {
 			const apiUrl = 'http://192.168.137.30:6001/process-split-file';
 			// const apiUrl = 'http://192.168.137.30:6000/process-split-file'; // Replace with your API endpoint
 			const apiKey = '178b26656fcc49470f572b34984f7db1155ae249088fd5424c2df28bfd8d5afb'; // Replace with your actual API key
@@ -135,20 +144,23 @@ export default {
 				'api-token': apiKey, // Alte.rnative for an API key passed directly in a custom header
 				};
 			const body = {
-				path: this.files[filelength-1].path,
-				split_file: true,
-				username: "TEST001"
+				filename: this.files[0].name,
+				// path: "C:\\ASR\\audio\\LCL1_1.wav",
+				path: "",
+				user_name:"LCL1_1"
 			};
 
 			await axios.post(apiUrl, body,  {headers})
 			
-			.then(response => {
-				console.log('Data fetched successfully:', response.data);
+			.then(async (res) => {
+				console.log('Data fetched successfully:', res.data);
+				await localStorage.setItem('transcript', JSON.stringify(res));
+				this.loadingCircle = false
+				this.$router.push({ name: 'transcript' });
 			})
 			.catch(error => {
 				console.error('Error fetching data:', error);
 			});
-			}
 		},
 		toggleActive() {
 			this.isActive = !this.isActive;
@@ -172,7 +184,7 @@ export default {
             include: false,
             file: file
           })
-		
+		console.log(this.files)
 		  this.getAudioDuration(file, this.files.length - 1)
 })
   
@@ -199,53 +211,56 @@ export default {
 			audio.src = url
 			this.files[index].path = audio.src
 			console.log(audio.src)
+			this.loading = true
 		},
   
 		drop(event) {
 			this.isActive = false;
-			// const uploadedFiles = event.dataTransfer.files
-			const uploadedFiles = Array.from(event.dataTransfer.files)
+			const uploadedFiles = event.dataTransfer.files[0]
+			// const uploadedFiles = Array.from(event.dataTransfer.files)
 			console.log(uploadedFiles.length);
+			let filepath = null
 
 		if ((this.files.length + uploadedFiles.length) > this.maxFiles) {
           alert(`สามารถอัปโหลดได้สูงสุด ${this.maxFiles} ไฟล์`)
           return
         }
 
-		// if (uploadedFiles.type.startsWith('audio/')) {
-        //   this.files.push({
-        //     id: Date.now() + Math.random(),
-        //     name: uploadedFiles.name,
-        //     size: this.formatFileSize(uploadedFiles.size),
-        //     duration: 'กำลังประมวลผล...',
-        //     position: 'LCL1',
-        //     include: false,
-        //     file: uploadedFiles
-        //   })
-		//   this.getAudioDuration(uploadedFiles, this.files.length - 1)
-		// }
-		// else {
-		// 	alert('กรุณาอัปโหลดไฟล์เสียงเท่านั้น')
-		// 	return
-		// }
-
-		uploadedFiles.forEach(file => {
+		if (uploadedFiles.type.startsWith('audio/')) {
           this.files.push({
             id: Date.now() + Math.random(),
-            name: file.name,
-            size: this.formatFileSize(file.size),
+            name: uploadedFiles.name,
+            size: this.formatFileSize(uploadedFiles.size),
             duration: 'กำลังประมวลผล...',
             position: 'LCL1',
             include: false,
-            file: file
+            file: uploadedFiles
           })
-		  
-		this.getAudioDuration(file, this.files.length - 1)
-		})
+		  this.getAudioDuration(uploadedFiles, this.files.length - 1)
+		}
+		else {
+			alert('กรุณาอัปโหลดไฟล์ .wav เท่านั้น')
+			return
+		}
+			
+		// uploadedFiles.forEach(file => {
+        //   this.files.push({
+        //     id: Date.now() + Math.random(),
+        //     name: file.name,
+        //     size: this.formatFileSize(file.size),
+        //     duration: 'กำลังประมวลผล...',
+        //     position: 'LCL1',
+        //     include: false,
+        //     file: file
+        //   })
+
+		// this.getAudioDuration(file, this.files.length - 1)
+		// })
 		  
 
         // Clear file input
         event.target.value = ''
+		
 		// this.senddata(this.files.length - 1)
 		},
 		previewAudio(file) {
@@ -285,7 +300,7 @@ export default {
 }
 
 :root .upload-container span {
-	padding-top: 10px;
+	padding-top: 5px;
 }
 
 .transcript {
@@ -466,5 +481,36 @@ export default {
     width: 20px;
     height: 20px;
     cursor: pointer;
+}
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ccd0e488 0%, #90889881 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    text-align: center;
+}
+
+.spinner {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    border: 8px solid rgba(255, 255, 255, 0.3);
+    border-top: 8px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 </style>
