@@ -95,7 +95,6 @@ import VueAxios from "vue-axios";
 import axios from "axios";
 import AudioPreview from '../audio_process/AudioPreview.vue';
 import Navbar from "./Navbar.vue";
-import path from "path";
 export default {    
     name: 'upload',
 	components: {
@@ -114,7 +113,6 @@ export default {
 			maxFiles: 1,
 			loading: false,
 			loadingCircle: false,
-			pathname: '',
 
 		}
 	},
@@ -132,7 +130,6 @@ export default {
 			localStorage.removeItem('transcript')
 			const filelength = this.files.length
 			this.loadingCircle = true
-			let filepath = null
 
 			const apiUrl = 'http://192.168.137.30:6001/process-split-file';
 			// const apiUrl = 'http://192.168.137.30:6000/process-split-file'; // Replace with your API endpoint
@@ -145,8 +142,7 @@ export default {
 				};
 			const body = {
 				filename: this.files[0].name,
-				// path: "C:\\ASR\\audio\\LCL1_1.wav",
-				path: "",
+				path: "C:\\ASR\\audio\\LCL1_1.wav",
 				user_name:"LCL1_1"
 			};
 
@@ -160,6 +156,9 @@ export default {
 			})
 			.catch(error => {
 				console.error('Error fetching data:', error);
+				this.loadingCircle = false
+				alert(' เกิดข้อผิดพลาดในการประมวลผลไฟล์ กรุณาลองใหม่อีกครั้ง ');
+				this.loading = true
 			});
 		},
 		toggleActive() {
@@ -184,7 +183,7 @@ export default {
             include: false,
             file: file
           })
-		console.log(this.files)
+		
 		  this.getAudioDuration(file, this.files.length - 1)
 })
   
@@ -216,48 +215,52 @@ export default {
   
 		drop(event) {
 			this.isActive = false;
-			const uploadedFiles = event.dataTransfer.files[0]
-			// const uploadedFiles = Array.from(event.dataTransfer.files)
-			console.log(uploadedFiles.length);
-			let filepath = null
+			// const uploadedFiles = event.dataTransfer.files[0]
+			const uploadedFiles = Array.from(event.dataTransfer.files)
+			// console.log(uploadedFiles.length);
 
-		if ((this.files.length + uploadedFiles.length) > this.maxFiles) {
+		if (this.files.length + uploadedFiles.length > this.maxFiles) {
           alert(`สามารถอัปโหลดได้สูงสุด ${this.maxFiles} ไฟล์`)
           return
         }
 
-		if (uploadedFiles.type.startsWith('audio/')) {
-          this.files.push({
-            id: Date.now() + Math.random(),
-            name: uploadedFiles.name,
-            size: this.formatFileSize(uploadedFiles.size),
-            duration: 'กำลังประมวลผล...',
-            position: 'LCL1',
-            include: false,
-            file: uploadedFiles
-          })
-		  this.getAudioDuration(uploadedFiles, this.files.length - 1)
-		}
-		else {
-			alert('กรุณาอัปโหลดไฟล์ .wav เท่านั้น')
-			return
-		}
-			
-		// uploadedFiles.forEach(file => {
+		// if (uploadedFiles.type.startsWith('audio/')) {
         //   this.files.push({
         //     id: Date.now() + Math.random(),
-        //     name: file.name,
-        //     size: this.formatFileSize(file.size),
+        //     name: uploadedFiles.name,
+        //     size: this.formatFileSize(uploadedFiles.size),
         //     duration: 'กำลังประมวลผล...',
         //     position: 'LCL1',
         //     include: false,
-        //     file: file
+        //     file: uploadedFiles
         //   })
+		//   this.getAudioDuration(uploadedFiles, this.files.length - 1)
+		// }
+		// else {
+		// 	alert('กรุณาอัปโหลดไฟล์ .wav เท่านั้น')
+		// 	return
+		// }
+		else if(!uploadedFiles.every(file => file.type === 'audio/wav')) {
+		  alert('กรุณาอัปโหลดไฟล์ .wav เท่านั้น')
+		  return
+		}
+		
+		else{
+		uploadedFiles.forEach(file => {
+          this.files.push({
+            id: Date.now() + Math.random(),
+            name: file.name,
+            size: this.formatFileSize(file.size),
+            duration: 'กำลังประมวลผล...',
+            position: 'LCL1',
+            include: false,
+            file: file
+          })
 
-		// this.getAudioDuration(file, this.files.length - 1)
-		// })
+		this.getAudioDuration(file, this.files.length - 1)
+		})
 		  
-
+		}
         // Clear file input
         event.target.value = ''
 		
@@ -277,7 +280,39 @@ export default {
 			this.selectedAudio = null;
 			this.isPlaying = false;
 			this.currentTime = '0:00'
-		}
+		},
+		seekAudio(time) {
+        this.currentTime = time
+		},
+		playPause() {
+			this.isPlaying = !this.isPlaying
+			
+			if (this.isPlaying) {
+			this.startPlayback()
+			} else {
+			this.stopPlayback()
+			}
+		},
+		startPlayback() {
+        let seconds = 0
+        this.playbackInterval = setInterval(() => {
+          if (!this.isPlaying) {
+            this.stopPlayback()
+            return
+          }
+          seconds++
+          const mins = Math.floor(seconds / 60)
+          const secs = seconds % 60
+          this.currentTime = `${mins}:${secs.toString().padStart(2, '0')}`
+        }, 1000)
+		},
+	
+		stopPlayback() {
+			if (this.playbackInterval) {
+			clearInterval(this.playbackInterval)
+			this.playbackInterval = null
+			}
+		},
     },
 }
 </script>

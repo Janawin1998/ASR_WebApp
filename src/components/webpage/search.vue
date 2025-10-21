@@ -9,9 +9,9 @@
 				<img src="../../assets/svg/Upload.svg" class="upload-item-search">
 				Upload Files
 			</a>
-            <div class="table-search table-responsive">
+            <div class="table-search table-responsive table-striped">
                 <table class="table table-bordered align-middle table-sm" style="border:solid 2px #000000;">
-						<thead class="table-dark">
+						<thead class="table-dark sticky-top">
 						<tr class="table-search-header">
 							<th style="width:80px">No.</th>
 							<th>Select</th>
@@ -22,8 +22,8 @@
 							<th style="width:300px">Role</th>
 						</tr>
 						</thead>
-						<tbody>
-						<tr v-for="(file, index) in files" :key="index">
+						<tbody class="table-search-body overflow-y-scroll">
+						<tr v-for="(file, index) in files" :key="index" >
 							<td class="action-text">{{ index + 1 }}.</td>
 							<td class="action-box">
 								<div @click="togglefile(index)">
@@ -254,14 +254,20 @@ export default {
     /* left: 100px; */
     width: 1500px;
     height: 630px;
-    overflow-y: auto;
 	margin-left: 200px;
 	border: solid 2px #e7e7e7;
 }
 .table-search-header{
+	position: sticky;
 	text-align: center;
 	user-select: none;
 	font-size: 20px;
+}
+.table-search-body{
+	font-size: 20px;
+	user-select: none;
+	/* overflow-y: scroll;
+	z-index: 999; */
 }
 .action-box{
   display: relative;

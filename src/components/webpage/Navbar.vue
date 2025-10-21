@@ -10,7 +10,7 @@
     </div>
     <div class="navbar-links">
         <a href="search" class="navbar-link">Home</a>
-        <a href="transcript" class="navbar-link">Transcript</a>
+        <!-- <a href="transcript" class="navbar-link">Transcript</a> -->
     </div>
     <div class="navbar-user">
         <img src="../../assets/svg/UserIcon.svg" alt="User Icon" class="user-icon"/>

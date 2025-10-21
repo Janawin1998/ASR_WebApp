@@ -66,14 +66,14 @@
 						</tbody>
 					</table>
       		</div>
-    		<div class="transcript-btn">
+    		<button class="transcript-btn">
       			<b class="transcript-text">Transcript</b>
                 <img class="micfill-icon" src="../../assets/svg/MicFill.svg">
-    		</div>
-    		<div class="export-btn">
+            </button>
+    		<button class="export-btn">
       			<b class="export-text">Export to CSV</b>
                 <img class="boxarrowup-icon" src="../../assets/svg/box-arrow-down.svg">
-    		</div>
+            </button>
     	
   	</div>
 </template>
@@ -177,8 +177,8 @@ export default {
 }
 .transcript-text {
   	position: absolute;
-  	top: 16px;
-  	left: calc(50% - 169px);
+  	top: 14px;
+  	left: 5%;
   	display: flex;
   	align-items: center;
   	justify-content: center;
@@ -212,8 +212,8 @@ export default {
 }
 .export-text {
   	position: absolute;
-  	top: 16px;
-  	left: calc(50% - 197.5px);
+  	top: 14px;
+  	left: 5%;
   	display: flex;
   	align-items: center;
   	justify-content: center;
